@@ -1,0 +1,7 @@
+.program ws2812
+.side_set 1
+
+.wrap_target
+    out x, 24  side 0 [2]  ; Send 24-bit RGB data
+    mov pins, x  side 1 [2]
+.wrap
