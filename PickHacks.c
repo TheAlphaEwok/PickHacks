@@ -425,10 +425,21 @@ void wordle() {
     char answer[5];
     for(int i = 0; i < 5; ++i) {
         answer[i] = wordBank[choice][i];
+
     }
     lcd_clear();
     while(attempt < 6 && win != true) {
-        int length = 1, letter1 = 0, letter2 = 0, letter3 = 0, letter4 = 0, letter5 = 0, letter, total = 0;
+        int length = 1, letter1 = 0, letter2 = 0, letter3 = 0, letter4 = 0, letter5 = 0, letter, total = 0, counter[26];
+        for(int i = 0; i < 26; ++i) {
+            counter[i] = 0;
+        }
+        for(int i = 0; i < 5; ++i) {
+            for(int k = 0; k < 26; ++k) {
+                if(answer[i] == alphabet[k]) {
+                    counter[k] += 1;
+                }
+            }
+        }
         lcd_set_cursor(0, 0);
         lcd_send_string("Attempt ");
         lcd_send_data(attempt + '0');
@@ -546,11 +557,8 @@ void wordle() {
                             gpio_put(0, 1);
                             gpio_put(5, 0);
                             gpio_put(14, 0);
+                            counter[letter1]--;
                             total++;
-                        } else if (test[0] == answer[1] || test[0] == answer[2] || test[0] == answer[3] || test[0] == answer[4]) {
-                            gpio_put(0, 0);
-                            gpio_put(5, 1);
-                            gpio_put(14, 0);
                         } else {
                             gpio_put(0, 0);
                             gpio_put(5, 0);
@@ -560,11 +568,8 @@ void wordle() {
                             gpio_put(1, 1);
                             gpio_put(6, 0);
                             gpio_put(15, 0);
+                            counter[letter2]--;
                             total++;
-                        } else if (test[1] == answer[0] || test[1] == answer[2] || test[1] == answer[3] || test[1] == answer[4]) {
-                            gpio_put(1, 0);
-                            gpio_put(6, 1);
-                            gpio_put(15, 0);
                         } else {
                             gpio_put(1, 0);
                             gpio_put(6, 0);
@@ -574,11 +579,8 @@ void wordle() {
                             gpio_put(2, 1);
                             gpio_put(7, 0);
                             gpio_put(16, 0);
+                            counter[letter3]--;
                             total++;
-                        } else if (test[2] == answer[0] || test[2] == answer[1] || test[2] == answer[3] || test[2] == answer[4]) {
-                            gpio_put(2, 0);
-                            gpio_put(7, 1);
-                            gpio_put(16, 0);
                         } else {
                             gpio_put(2, 0);
                             gpio_put(7, 0);
@@ -588,11 +590,8 @@ void wordle() {
                             gpio_put(3, 1);
                             gpio_put(8, 0);
                             gpio_put(17, 0);
+                            counter[letter4]--;
                             total++;
-                        } else if (test[3] == answer[0] || test[3] == answer[1] || test[3] == answer[2] || test[0] == answer[4]) {
-                            gpio_put(3, 0);
-                            gpio_put(8, 1);
-                            gpio_put(17, 0);
                         } else {
                             gpio_put(3, 0);
                             gpio_put(8, 0);
@@ -602,15 +601,39 @@ void wordle() {
                             gpio_put(4, 1);
                             gpio_put(9, 0);
                             gpio_put(18, 0);
+                            counter[letter5]--;
                             total++;
-                        } else if(test[4] == answer[0] || test[4] == answer[1] || test[4] == answer[2] || test[4] == answer[3]) {
-                            gpio_put(4, 0);
-                            gpio_put(9, 1);
-                            gpio_put(18, 0);
                         } else {
                             gpio_put(4, 0);
                             gpio_put(9, 0);
                             gpio_put(18, 1);
+                        }
+                        for(int i = 0; i < 26; ++i) {
+                            while(counter[i] > 0) {
+                                if(letter1 == i && gpio_get(0) != 1) {
+                                    gpio_put(5, 1);
+                                    gpio_put(14, 0);
+                                    counter[i]--;
+                                } else if(letter2 == i && gpio_get(1) != 1) {
+                                    gpio_put(6, 1);
+                                    gpio_put(15, 0);
+                                    counter[i]--;
+                                } else if(letter3 == i && gpio_get(2) != 1) {
+                                    gpio_put(7, 1);
+                                    gpio_put(16, 0);
+                                    counter[i]--;
+                                } else if(letter4 == i && gpio_get(3) != 1) {
+                                    gpio_put(8, 1);
+                                    gpio_put(17, 0);
+                                    counter[i]--;
+                                } else if(letter4 == i && gpio_get(4) != 1) {
+                                    gpio_put(9, 1);
+                                    gpio_put(18, 0);
+                                    counter[i]--;
+                                } else {
+                                    counter[i]--;
+                                }
+                            }
                         }
                         if(total == 5) {
                             win = true;
@@ -631,7 +654,6 @@ void wordle() {
             for(int i = 0; i < 5; ++i) {
                 lcd_send_data(answer[i]);
             }
-            sleep_ms(2000);
         } else {
             lcd_clear();
             lcd_send_string("You are out");
@@ -645,6 +667,11 @@ void wordle() {
             for(int i = 0; i < 5; ++i) {
                 lcd_send_data(answer[i]);
             }
-            sleep_ms(2000);
+        }
+        sleep_ms(2000);
+        for(int i = 0; i < 19; ++i) {
+            if(i < 10 || i > 13) {
+                gpio_put(i, 0);
+            }
         }
 }
