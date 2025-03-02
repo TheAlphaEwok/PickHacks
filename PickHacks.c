@@ -56,9 +56,13 @@ void lcd_clear();
 // Return: Integer value in degrees
 int getDirection(int UP, int DOWN, int LEFT, int RIGHT);
 
+void allGreen(int onOff);
+
+void allRed(int onOff);
+
 // Desc: Play 5 seconds of a random song on a list and have user guess from multiple options
 // Inputs: Genre (A == Anime, P == Pop, R == Rap)
-void fiveSecondSongQuiz(char genre, char difficulty);
+void fiveSecondSongQuiz(char genre);
 
 // Desc: Play song given a genre and number
 void songs(char genre, int choice);
@@ -104,8 +108,37 @@ int main()
             blue = gpio_get(12);
             red = gpio_get(13);
             if (yellow == 0) {
+                char genre, difficulty;
                 lcd_clear();
-                fiveSecondSongQuiz('A', 'E');
+                lcd_set_cursor(0, 0);
+                lcd_send_string("Choose A Genre:");
+                sleep_ms(1500);
+                lcd_clear();
+                lcd_set_cursor(0, 0);
+                lcd_send_string("Y:Pop W:Anime");
+                lcd_set_cursor(1, 0);
+                lcd_send_string("B:Rap R:Random");
+                yellow = gpio_get(10);
+                white = gpio_get(11);
+                blue = gpio_get(12);
+                red = gpio_get(13);               
+                while(yellow == 1 && white == 1 && blue == 1 && red == 1) {
+                    yellow = gpio_get(10);
+                    white = gpio_get(11);
+                    blue = gpio_get(12); 
+                    red = gpio_get(13);                
+                }
+                if(yellow == 0) {
+                    genre = 'P';
+                } else if(white == 0) {
+                    genre = 'A';
+                } else if(blue == 0) {
+                    genre = 'R';
+                } else if(red == 0) {
+                    genre = 'X';
+                } 
+                lcd_clear();
+                fiveSecondSongQuiz(genre);
                 lcd_clear();
                 lcd_set_cursor(0,0);
                 lcd_send_string("Y:Musedle");
@@ -257,16 +290,33 @@ int getDirection(int UP, int DOWN, int LEFT, int RIGHT) {
     }
 }
 
-void fiveSecondSongQuiz(char genre, char difficulty) {
+void allGreen(int onOff) {
+    gpio_put(0, onOff);
+    gpio_put(1, onOff);
+    gpio_put(2, onOff);
+    gpio_put(3, onOff);
+    gpio_put(4, onOff);
+}
+
+void allRed(int onOff) {
+    gpio_put(14, onOff);
+    gpio_put(15, onOff);
+    gpio_put(16, onOff);
+    gpio_put(17, onOff);
+    gpio_put(18, onOff);
+}
+
+void fiveSecondSongQuiz(char genre) {
     srand(time(NULL));
+    int buttonSelect, answer;
     lcd_clear();
     lcd_set_cursor(0, 0);
     lcd_send_string("Musedle Loading");
     sleep_ms(2000);
     lcd_clear();
-    if(genre == 'A' && difficulty == 'E') {
-        int answer = rand()%3+1;
-        songs(genre, answer);
+    answer = rand()%3+1;
+    songs(genre, answer);
+    if(genre == 'A') {
         lcd_set_cursor(0, 0);
         lcd_send_string("What opening ");
         lcd_set_cursor(1, 0);
@@ -276,27 +326,26 @@ void fiveSecondSongQuiz(char genre, char difficulty) {
         lcd_send_string("Y: Tokyo Ghoul");
         lcd_set_cursor(1, 0);
         lcd_send_string("W: AOT");
-        sleep_ms(500);
+        sleep_ms(1500);
         lcd_send_cmd(LCD_CLEAR);
         lcd_send_string("B: JJK");
         lcd_set_cursor(1, 0);
         lcd_send_string("R: No Clue");
-        sleep_ms(500);
+        sleep_ms(1500);
         int direction = getDirection(10,11,12,13);
         while (direction != 0 && direction != 90 && direction != 180 && direction != 270) {
             lcd_send_cmd(LCD_CLEAR);
             lcd_send_string("Y: Tokyo Ghoul");
             lcd_set_cursor(1, 0);
             lcd_send_string("W: AOT");
-            sleep_ms(1000);
+            sleep_ms(1500);
             lcd_send_cmd(LCD_CLEAR);
             lcd_send_string("B: JJK");
             lcd_set_cursor(1, 0);
             lcd_send_string("R: No Clue");
-            sleep_ms(1000);
+            sleep_ms(1500);
             direction = getDirection(10,11,12,13);
         }
-        int buttonSelect;
         if(direction == 0) {
             buttonSelect = 2;
         } else if (direction == 90) {
@@ -306,23 +355,27 @@ void fiveSecondSongQuiz(char genre, char difficulty) {
         } else if (direction == 270) {
             buttonSelect = 4;
         }
-        int userAns = buttonSelect;
-        if (userAns == answer) {
-            buzzer(2960, 0.1, 20);
-            sleep_ms(100);
-            buzzer(2960, 0.1, 20);
-            sleep_ms(100);
-            buzzer(2960, 0.1, 20);
-            lcd_send_cmd(LCD_CLEAR);
-            lcd_send_string("That's Correct!");
-            sleep_ms(1500);
-        } else {
-            buzzer(147, 1, 20);
-            lcd_clear();
-            lcd_set_cursor(0, 0);
-            lcd_send_string("Incorrect :(");
-            sleep_ms(1500);
-        }
+    }
+    int userAns = buttonSelect;
+    if (userAns == answer) {
+        buzzer(2960, 0.1, 20);
+        allGreen(1);
+        sleep_ms(100);
+        buzzer(2960, 0.1, 20);
+        sleep_ms(100);
+        buzzer(2960, 0.1, 20);
+        lcd_send_cmd(LCD_CLEAR);
+        lcd_send_string("That's Correct!");
+        sleep_ms(1500);
+        allGreen(0);
+    } else {
+        allRed(1);
+        buzzer(147, 1, 20);
+        lcd_clear();
+        lcd_set_cursor(0, 0);
+        lcd_send_string("Incorrect :(");
+        sleep_ms(1500);
+        allRed(0);
     }
 }
 
@@ -377,6 +430,20 @@ void songs(char genre, int choice) {
         buzzer(988, 0.25/1.95, 20);
         buzzer(880, 0.25/1.95, 20);
         buzzer(740, 0.25/1.95, 20);
+
+    
+    } else if (genre == 'P' && choice == 1) {
+
+    } else if (genre == 'P' && choice == 2) {
+
+    } else if (genre == 'P' && choice == 3) {
+
+    } else if (genre == 'R' && choice == 1) {
+
+    } else if (genre == 'R' && choice == 2) {
+
+    } else if (genre == 'R' && choice == 3) {
+
     }
 }
 
@@ -385,7 +452,45 @@ void wordle() {
     lcd_clear();
     lcd_set_cursor(0, 0);
     lcd_send_string("Wordle Loading");
-    sleep_ms(2000);
+    lcd_set_cursor(1, 0);
+    lcd_send_string("How to Play:");
+    sleep_ms(1500);
+    lcd_clear();
+    lcd_set_cursor(0, 0);
+    lcd_send_string("Red LED:");
+    lcd_set_cursor(1, 0);
+    lcd_send_string("Wrong Letter");
+    sleep_ms(1500);
+    lcd_clear();
+    lcd_set_cursor(0, 0);
+    lcd_send_string("Yellow LED:");
+    lcd_set_cursor(1, 0);
+    lcd_send_string("Right Letter");
+    sleep_ms(1000);
+    lcd_clear();
+    lcd_set_cursor(0, 0);
+    lcd_send_string("Yellow LED:");
+    lcd_set_cursor(1, 0);
+    lcd_send_string("Wrong Spot ");
+    sleep_ms(1000);
+    lcd_clear();
+    lcd_set_cursor(0, 0);
+    lcd_send_string("Green LED:");
+    lcd_set_cursor(1, 0);
+    lcd_send_string("Right Letter");
+    sleep_ms(1000);
+    lcd_clear();
+    lcd_set_cursor(0, 0);
+    lcd_send_string("Green LED:");
+    lcd_set_cursor(1, 0);
+    lcd_send_string("Right Spot");
+    sleep_ms(1000);
+    lcd_clear();
+    lcd_set_cursor(0, 0);
+    lcd_send_string("Y/W: Up/Down");
+    lcd_set_cursor(1, 0);
+    lcd_send_string("B/R: Left/Right");
+    sleep_ms(1500);
     int attempt = 1;
     bool win = false;
     char wordBank[5][5], test[5];
@@ -429,7 +534,7 @@ void wordle() {
     }
     lcd_clear();
     while(attempt < 6 && win != true) {
-        int length = 1, letter1 = 0, letter2 = 0, letter3 = 0, letter4 = 0, letter5 = 0, letter, total = 0, counter[26];
+        int length = 1, letter1 = 0, letter2 = 0, letter3 = 0, letter4 = 0, letter5 = 0, letter = 0, total = 0, counter[26];
         for(int i = 0; i < 26; ++i) {
             counter[i] = 0;
         }
@@ -451,6 +556,12 @@ void wordle() {
         }
         lcd_set_cursor(0, 11);
         while(length != 6) {
+            lcd_set_cursor(0, length + 10);
+            lcd_send_data(' ');
+            sleep_ms(50);
+            lcd_set_cursor(0, length + 10);
+            lcd_send_data(guess[length - 1][letter]);
+            sleep_ms(50);
             if(gpio_get(10) == 0) {
                 if (length == 1) {
                     if(letter1 == 25) {                        
@@ -536,11 +647,29 @@ void wordle() {
                 } else if (gpio_get(12) == 0) {
                     if(length > 1) {
                         length--;
+                        if(length == 1) {
+                            letter = letter1;
+                        } else if(length == 2) {
+                            letter = letter2;
+                        } else if(length == 3) {
+                            letter = letter3;
+                        } else if(length == 4) {
+                            letter = letter4;
+                        }
                     }
                     sleep_ms(250);
                 }  else if (gpio_get(13) == 0) {
                     if(length < 5) {
                         length++;
+                        if(length == 2) {
+                            letter = letter2;
+                        } else if(length == 3) {
+                            letter = letter3;
+                        } else if(length == 4) {
+                            letter = letter4;
+                        } else if(length == 5) {
+                            letter = letter5;
+                        }
                     } else {
                         test[0] = guess[0][letter1];
                         test[1] = guess[1][letter2];
@@ -626,7 +755,7 @@ void wordle() {
                                     gpio_put(8, 1);
                                     gpio_put(17, 0);
                                     counter[i]--;
-                                } else if(letter4 == i && gpio_get(4) != 1) {
+                                } else if(letter5 == i && gpio_get(4) != 1) {
                                     gpio_put(9, 1);
                                     gpio_put(18, 0);
                                     counter[i]--;
