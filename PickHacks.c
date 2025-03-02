@@ -108,7 +108,7 @@ int main()
             blue = gpio_get(12);
             red = gpio_get(13);
             if (yellow == 0) {
-                char genre, difficulty;
+                char genre;
                 lcd_clear();
                 lcd_set_cursor(0, 0);
                 lcd_send_string("Choose A Genre:");
@@ -135,7 +135,14 @@ int main()
                 } else if(blue == 0) {
                     genre = 'R';
                 } else if(red == 0) {
-                    genre = 'X';
+                    int x = rand()%3+1;
+                    if(x == 1) {
+                        genre = 'P';
+                    } else if (x == 2) {
+                        genre = 'A';
+                    } else {
+                        genre = 'R';
+                    }
                 } 
                 lcd_clear();
                 fiveSecondSongQuiz(genre);
@@ -355,6 +362,96 @@ void fiveSecondSongQuiz(char genre) {
         } else if (direction == 270) {
             buttonSelect = 4;
         }
+    } else if(genre == 'P') {
+        lcd_set_cursor(0, 0);
+        lcd_send_string("What song");
+        lcd_set_cursor(1, 0);
+        lcd_send_string("was that?");
+        sleep_ms(1000);
+        lcd_send_cmd(LCD_CLEAR);
+        lcd_send_string("Y: Call Me Maybe");
+        lcd_set_cursor(1, 0);
+        lcd_send_string("W: Espresso");
+        sleep_ms(1500);
+        lcd_send_cmd(LCD_CLEAR);
+        lcd_send_string("B: Royals");
+        lcd_set_cursor(1, 0);
+        lcd_send_string("R: No Clue");
+        sleep_ms(1500);
+        int yellow = gpio_get(10);
+        int white = gpio_get(11);
+        int blue = gpio_get(12);
+        int red = gpio_get(13);     
+        while (yellow == 1 && white== 1 && blue == 1 && red == 1) {
+            lcd_send_cmd(LCD_CLEAR);
+            lcd_send_string("Y: Call Me Maybe");
+            lcd_set_cursor(1, 0);
+            lcd_send_string("W: Espresso");
+            sleep_ms(1500);
+            lcd_send_cmd(LCD_CLEAR);
+            lcd_send_string("B: Royals");
+            lcd_set_cursor(1, 0);
+            lcd_send_string("R: No Clue");
+            sleep_ms(1500);
+            yellow = gpio_get(10);
+            white = gpio_get(11);
+            blue = gpio_get(12);
+            red = gpio_get(13);     
+        }
+        if(yellow == 0) {
+            buttonSelect = 1;
+        } else if(white == 0) {
+            buttonSelect = 2;
+        } else if(blue == 0) {
+            buttonSelect = 3;
+        } else if(red == 0) {
+            buttonSelect = 4;
+        }
+    } else if (genre == 'R') {
+        lcd_set_cursor(0, 0);
+        lcd_send_string("What song");
+        lcd_set_cursor(1, 0);
+        lcd_send_string("was that?");
+        sleep_ms(1000);
+        lcd_send_cmd(LCD_CLEAR);
+        lcd_send_string("Y: HUMBLE");
+        lcd_set_cursor(1, 0);
+        lcd_send_string("W: Gangsta's P");
+        sleep_ms(1500);
+        lcd_send_cmd(LCD_CLEAR);
+        lcd_send_string("B: Come Get Her");
+        lcd_set_cursor(1, 0);
+        lcd_send_string("R: No Clue");
+        sleep_ms(1500);
+        int yellow = gpio_get(10);
+        int white = gpio_get(11);
+        int blue = gpio_get(12);
+        int red = gpio_get(13);     
+        while (yellow == 1 && white== 1 && blue == 1 && red == 1) {
+            lcd_send_cmd(LCD_CLEAR);
+            lcd_send_string("Y: HUMBLE");
+            lcd_set_cursor(1, 0);
+            lcd_send_string("W: Gangsta's P");
+            sleep_ms(1500);
+            lcd_send_cmd(LCD_CLEAR);
+            lcd_send_string("B: Come Get Her");
+            lcd_set_cursor(1, 0);
+            lcd_send_string("R: No Clue");
+            sleep_ms(1500);
+            yellow = gpio_get(10);
+            white = gpio_get(11);
+            blue = gpio_get(12);
+            red = gpio_get(13);     
+        }
+        if(yellow == 0) {
+            buttonSelect = 1;
+        } else if(white == 0) {
+            buttonSelect = 2;
+        } else if(blue == 0) {
+            buttonSelect = 3;
+        } else if(red == 0) {
+            buttonSelect = 4;
+        }
     }
     int userAns = buttonSelect;
     if (userAns == answer) {
@@ -366,7 +463,7 @@ void fiveSecondSongQuiz(char genre) {
         buzzer(2960, 0.1, 20);
         lcd_send_cmd(LCD_CLEAR);
         lcd_send_string("That's Correct!");
-        sleep_ms(1500);
+        sleep_ms(2000);
         allGreen(0);
     } else {
         allRed(1);
@@ -431,19 +528,136 @@ void songs(char genre, int choice) {
         buzzer(880, 0.25/1.95, 20);
         buzzer(740, 0.25/1.95, 20);
 
-    
+    //Call Me Maybe - Carly Rae Jepson 132 BPM? = 2.2BPS?
     } else if (genre == 'P' && choice == 1) {
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(440, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        sleep_ms((0.5/2.2)*1000);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(440, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        sleep_ms((0.5/2.2)*1000);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);   
+        buzzer(440, 0.5/2.2, 20);
+        buzzer(440, 0.5/2.2, 20);
+        sleep_ms((0.5/2.2)*1000);
+        buzzer(440, 0.5/2.2, 20);
+        buzzer(440, 0.5/2.2, 20);
+        buzzer(392, 0.5/2.2, 20);
+        buzzer(392, 0.75/2.2, 20);
+        buzzer(587, 0.75/2.2, 20);
+        buzzer(494, 0.5/2.2, 20);
 
+    //Espresso - Sabrina Carpenter - BPM 104 = 1.73
     } else if (genre == 'P' && choice == 2) {
+        buzzer(587, 0.5/1.73, 20);
+        buzzer(440, 0.5/1.73, 20);
+        sleep_ms((1/1.73)*1000);
+        buzzer(523, 0.25/1.73, 20);
+        buzzer(523, 0.25/1.73, 20);
+        buzzer(523, 0.5/1.73, 20);
+        buzzer(659, 1/1.73, 20);
+        buzzer(440, 0.25/1.73, 20);
+        buzzer(440, 0.25/1.73, 20);
+        buzzer(440, 0.5/1.73, 20);
+        buzzer(494, 1/1.73, 20);
+        buzzer(392, 0.25/1.73, 20);
+        buzzer(392, 0.25/1.73, 20);
+        buzzer(392, 0.5/1.73, 20);
+        buzzer(494, 0.5/1.73, 20);
+        buzzer(587, 0.5/1.73, 20);
+        buzzer(523, 0.5/1.73, 20);
+        buzzer(494, 0.5/1.73, 20);
+        buzzer(440, 0.5/1.73, 20);
 
+    //Royals - Lorde - BPM 90 = BPS 1.5
     } else if (genre == 'P' && choice == 3) {
+        buzzer(587, 0.25/1.5, 20);
+        buzzer(587, 0.25/1.5, 20);
+        buzzer(659, 0.25/1.5, 20);
+        buzzer(740, 0.25/1.5, 20);
+        buzzer(587, 0.25/1.5, 20);
+        buzzer(659, 0.5/1.5, 20);
+        buzzer(440, 0.5/1.5, 20);
+        buzzer(440, 0.5/1.5, 20);
+        buzzer(587, 0.5/1.5, 20);
+        buzzer(587, 0.5/1.5, 20);
+        buzzer(740, 0.25/1.5, 20);
+        buzzer(740, 0.25/1.5, 20);
+        buzzer(740, 0.25/1.5, 20);
+        buzzer(740, 0.25/1.5, 20);
+        buzzer(587, 0.5/1.5, 20);
+        buzzer(587, 0.5/1.5, 20);
+        buzzer(440, 0.5/1.5, 20);
+        buzzer(440, 0.5/1.5, 20);
+        buzzer(587, 0.5/1.5, 20);
+        buzzer(587, 0.5/1.5, 20);
+        buzzer(740, 0.25/1.5, 20);
+        buzzer(740, 0.25/1.5, 20);
+        buzzer(740, 0.25/1.5, 20);
+        buzzer(740, 0.25/1.5, 20);
+        buzzer(587, 0.5/1.5, 20);
+        buzzer(587, 0.5/1.5, 20);
 
+    //Humble - Kendrick Lamar - BPM 150 = BPS 2.5
     } else if (genre == 'R' && choice == 1) {
+        buzzer(370, 1/2.5, 20);
+        buzzer(370, 1/2.5, 20);
+        sleep_ms((1/2.5)*1000);
+        buzzer(392, 1/2.5, 20);
+        buzzer(370, 1/2.5, 20);
+        buzzer(247, 0.5/2.5, 20);
+        buzzer(247, 0.5/2.5, 20);
+        sleep_ms((0.5/2.5)*1000);
+        buzzer(247, 0.5/2.5, 20);
+        buzzer(370, 1/2.5, 20);
+        buzzer(370, 1/2.5, 20);
+        sleep_ms((1/2.5)*1000);
+        buzzer(392, 1/2.5, 20);
+        buzzer(370, 1/2.5, 20);
+        buzzer(247, 0.5/2.5, 20);
+        buzzer(247, 0.5/2.5, 20);
 
+    //Gangsta's Paradise - Coolio - BPM 120 - BPS 2
     } else if (genre == 'R' && choice == 2) {
+        buzzer(523, 0.5, 20);
+        buzzer(523, 0.5, 20);
+        buzzer(523, 0.5, 20);
+        buzzer(523, 0.5, 20);
+        buzzer(494, 0.5, 20);
+        buzzer(494, 0.5, 20);
+        buzzer(523, 0.5, 20);
+        buzzer(392, 0.5, 20);
 
+    //Come Get Her - Rae Sremmurd - BPM 120 = BPS 2
     } else if (genre == 'R' && choice == 3) {
-
+        buzzer(440, 0.5/2, 20);
+        buzzer(587, 0.5/2, 20);
+        buzzer(659, 0.5/2, 20);
+        buzzer(698, 0.5/2, 20);
+        buzzer(440, 0.5, 20);
+        sleep_ms(50);
+        buzzer(440, 0.5/2, 20);
+        buzzer(466, 0.5/2, 20);
+        buzzer(466, 0.5/2, 20);
+        buzzer(466, 0.5/2, 20);
+        buzzer(440, 0.5/2, 20);
+        buzzer(392, 0.5, 20);
+        sleep_ms(50);
+        buzzer(440, 0.5, 20);
     }
 }
 
@@ -493,40 +707,85 @@ void wordle() {
     sleep_ms(1500);
     int attempt = 1;
     bool win = false;
-    char wordBank[5][5], test[5];
+    char wordBank[10][5], test[5];
     char alphabet[26] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+    //HACKS
     wordBank[0][0] = 'H';
     wordBank[0][1] = 'A';
     wordBank[0][2] = 'C';
     wordBank[0][3] = 'K';
     wordBank[0][4] = 'S';
+
+    //PUPPY
     wordBank[1][0] = 'P';
     wordBank[1][1] = 'U';
     wordBank[1][2] = 'P';
     wordBank[1][3] = 'P';
     wordBank[1][4] = 'Y';
+
+    //HILLY
     wordBank[2][0] = 'H';
     wordBank[2][1] = 'I';
     wordBank[2][2] = 'L';
     wordBank[2][3] = 'L';
     wordBank[2][4] = 'Y';
+
+    //BEACH
     wordBank[3][0] = 'B';
     wordBank[3][1] = 'E';
     wordBank[3][2] = 'A';
     wordBank[3][3] = 'C';
     wordBank[3][4] = 'H';
+
+    //CODES
     wordBank[4][0] = 'C';
     wordBank[4][1] = 'O';
     wordBank[4][2] = 'D';
     wordBank[4][3] = 'E';
     wordBank[4][4] = 'S';
+
+    //PASTE
+    wordBank[5][0] = 'P';
+    wordBank[5][1] = 'A';
+    wordBank[5][2] = 'S';
+    wordBank[5][3] = 'T';
+    wordBank[5][4] = 'E';
+
+    //COLOR
+    wordBank[6][0] = 'C';
+    wordBank[6][1] = 'O';
+    wordBank[6][2] = 'L';
+    wordBank[6][3] = 'O';
+    wordBank[6][4] = 'R';
+
+    //LIGHT
+    wordBank[7][0] = 'L';
+    wordBank[7][1] = 'I';
+    wordBank[7][2] = 'G';
+    wordBank[7][3] = 'H';
+    wordBank[7][4] = 'T';
+
+    //WHALE
+    wordBank[8][0] = 'W';
+    wordBank[8][1] = 'H';
+    wordBank[8][2] = 'A';
+    wordBank[8][3] = 'L';
+    wordBank[8][4] = 'E';
+
+    //ZEBRA
+    wordBank[9][0] = 'Z';
+    wordBank[9][1] = 'E';
+    wordBank[9][2] = 'B';
+    wordBank[9][3] = 'R';
+    wordBank[9][4] = 'A';
+
     char guess[5][26];
     for(int j = 0; j < 5; ++j) {
         for(int i = 0; i < 26; ++i) {
             guess[j][i] = alphabet[i];
         }
     }
-    int choice = rand()%5;
+    int choice = rand()%10;
     char answer[5];
     for(int i = 0; i < 5; ++i) {
         answer[i] = wordBank[choice][i];
